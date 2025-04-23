@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        COMPOSE_PROJECT_NAME = "bookstore_project"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                // If you're setting the repo in Jenkins, this is handled automatically.
+                echo '✅ Code checked out from GitHub'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker-compose -p %COMPOSE_PROJECT_NAME% build'
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                echo '🧪 Running Django tests...'
+                bat 'docker-compose -p %COMPOSE_PROJECT_NAME% run --rm web python manage.py test'
+            }
+        }
+
+        stage('Deploy App') {
+            steps {
+                echo '🚀 Deploying the Django app...'
+                bat 'docker-compose -p %COMPOSE_PROJECT_NAME% up -d'
+            }
+        }
+
+        stage('Apply Migrations') {
+            steps {
+                bat 'docker-compose -p %COMPOSE_PROJECT_NAME% exec web python manage.py migrate'
+            }
+        }
+
+        stage('Collect Static Files') {
+            steps {
+                bat 'docker-compose -p %COMPOSE_PROJECT_NAME% exec web python manage.py collectstatic --noinput'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ CI/CD pipeline completed successfully!'
+        }
+        failure {
+            echo '❌ CI/CD pipeline failed. Please check the logs above.'
+        }
+    }
+}
