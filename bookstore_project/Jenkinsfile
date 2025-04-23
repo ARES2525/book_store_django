@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_DIR = 'bookstore_project'  
+        PROJECT_DIR = 'bookstore_project'
     }
 
     stages {
@@ -19,7 +19,7 @@ pipeline {
             steps {
                 echo '✅ Running Django tests...'
                 dir("${env.PROJECT_DIR}") {
-                    bat 'docker-compose run web python manage.py test'
+                    bat 'docker-compose run bookstore_website python manage.py test'
                 }
             }
         }
