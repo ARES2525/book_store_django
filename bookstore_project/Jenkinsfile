@@ -13,11 +13,12 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                bat 'docker-compose -p %COMPOSE_PROJECT_NAME% build'
+       stage('Build Docker Image') {
+           steps {
+                bat 'docker-compose -f path/to/docker-compose.yml -p bookstore_project build'
             }
         }
+
 
         stage('Run Unit Tests') {
             steps {
