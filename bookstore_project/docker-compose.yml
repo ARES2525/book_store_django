@@ -1,23 +1,23 @@
 version: "3"
 
 services:
-  bookstore_website:
-                build: .
-                ports:
-                - "8001:8000"
-                volumes:
-                - .:/app
-                depends_on:
-                - db
-                environment:
-                - DEBUG=1
-                command: python manage.py runserver 0.0.0.0:8000
+  web:
+    build: .
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - DEBUG=1
+    command: python manage.py runserver 0.0.0.0:8000
 
   db:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_DATABASE: bookstore_db
+      MYSQL_DATABASE: ticket_db
       MYSQL_ROOT_PASSWORD: rootpass
     ports:
       - "3310:3306"
