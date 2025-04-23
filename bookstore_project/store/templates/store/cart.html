@@ -1,0 +1,46 @@
+
+
+<!-- <h2>Your Cart</h2>
+
+{% if cart_items %}
+    <ul>
+        {% for item in cart_items %}
+            <li>
+                {{ item.book.title }} - ₹{{ item.book.price }} × {{ item.quantity }}
+                = ₹{{ item.subtotal }}
+            </li>
+        {% endfor %}
+    </ul>
+    <p><strong>Total:</strong> ₹{{ total }}</p>
+{% else %}
+    <p>Your cart is empty.</p>
+{% endif %}
+
+<a href="{% url 'book-list' %}">← Continue Shopping</a> -->
+
+
+
+<h2>Your Cart</h2>
+
+{% if cart_items %}
+    <ul>
+        {% for item in cart_items %}
+            <li>
+                <strong>{{ item.book.title }}</strong> - ₹{{ item.book.price }} × {{ item.quantity }}
+                = ₹{{ item.subtotal }}
+
+                <!-- Remove Quantity Form -->
+                <form action="{% url 'remove-from-cart' item.book.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" value="1" min="1" style="width: 40px;">
+                    <button type="submit">Remove</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+    <p><strong>Total:</strong> ₹{{ total }}</p>
+{% else %}
+    <p>Your cart is empty.</p>
+{% endif %}
+
+<a href="{% url 'book-list' %}">← Continue Shopping</a>

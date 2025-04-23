@@ -1,0 +1,11 @@
+<h2>{% if book %}Edit{% else %}Add{% endif %} Book</h2>
+<form method="post">
+  {% csrf_token %}
+  <input type="text" name="title" placeholder="Title" value="{{ book.title|default:'' }}" required><br>
+  <input type="text" name="author" placeholder="Author" value="{{ book.author|default:'' }}" required><br>
+  <input type="number" step="0.01" name="price" placeholder="Price" value="{{ book.price|default:'' }}" required><br>
+  <input type="number" name="stock" placeholder="Stock" value="{{ book.stock|default:'' }}" required><br>
+  <textarea name="description" placeholder="Description">{{ book.description|default:'' }}</textarea><br>
+  <button type="submit">{% if book %}Update{% else %}Add{% endif %}</button>
+</form>
+<a href="{% url 'admin_dashboard' %}">Back to Dashboard</a>

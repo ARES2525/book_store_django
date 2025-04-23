@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .book-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s;
+    }
+
+    .book-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .book-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #007bff;
+    }
+
+    .book-author {
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+    .book-description {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0.5rem 0;
+        height: 70px;
+        overflow: hidden;
+    }
+
+    .book-price {
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn {
+        display: inline-block;
+        background: #007bff;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background 0.3s;
+    }
+
+    .btn:hover {
+        background: #0056b3;
+    }
+
+    .top-links {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .top-links a {
+        font-size: 0.95rem;
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    .top-links a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="top-links">
+    <a href="{% url 'cart-view' %}">🛒 View Cart</a>
+    <!-- <a href="{% url 'book-list' %}">🏠 Back to Home</a> -->
+</div>
+
+<h2>Browse Books</h2>
+
+<div class="book-grid">
+    {% for book in books %}
+        <div class="book-card">
+            <div class="book-title">{{ book.title }}</div>
+            <div class="book-author">by {{ book.author }}</div>
+            <div class="book-description">{{ book.description }}</div>
+            <div class="book-price">₹{{ book.price }}</div>
+            <a class="btn" href="{% url 'book-detail' book.pk %}">View Details</a>
+        </div>
+    {% empty %}
+        <p>No books available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

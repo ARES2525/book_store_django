@@ -1,0 +1,30 @@
+<!-- store/templates/store/login.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login to Bookstore</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'store/css/style.css' %}">
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="login-link">
+            <p>Don't have an account? <a href="{% url 'register' %}">Register Here</a></p>
+        </div>
+    </div>
+</body>
+</html>

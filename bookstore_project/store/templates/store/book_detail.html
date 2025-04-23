@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .book-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .book-container h2 {
+        color: #343a40;
+        margin-bottom: 1rem;
+    }
+
+    .book-container p {
+        font-size: 1rem;
+        margin: 0.5rem 0;
+        color: #555;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="number"] {
+        width: 60px;
+        padding: 5px;
+        margin-left: 10px;
+    }
+
+    .btn {
+        display: inline-block;
+        background: #007bff;
+        color: white;
+        padding: 0.5rem 1rem;
+        margin-top: 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background 0.3s;
+    }
+
+    .btn:hover {
+        background: #0056b3;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 1.5rem;
+        text-decoration: none;
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="book-container">
+    <h2>{{ book.title }}</h2>
+    <p><strong>Author:</strong> {{ book.author }}</p>
+    <p><strong>Price:</strong> ₹{{ book.price }}</p>
+    <p><strong>Stock:</strong> {{ book.stock }}</p>
+
+    <form action="{% url 'add-to-cart' book.pk %}" method="post">
+        {% csrf_token %}
+        <label>Quantity:</label>
+        <input type="number" name="quantity" value="1" min="1" max="{{ book.stock }}">
+        <br>
+        <button class="btn" type="submit">🛒 Add to Cart</button>
+    </form>
+
+    <a class="back-link" href="{% url 'book-list' %}">← Back to Book List</a>
+</div>
+{% endblock %}

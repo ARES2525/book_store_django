@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to the Bookstore</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'store/css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #343a40;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .welcome-message {
+            font-size: 1.5rem;
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .button-container {
+            margin-top: 2rem;
+        }
+
+        .button-container a {
+            margin: 0.5rem;
+            text-decoration: none;
+        }
+
+        .button-container button {
+            background: #007bff;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .button-container button:hover {
+            background: #0056b3;
+        }
+
+        .button-container a button {
+            width: 100%;
+            max-width: 200px;
+            margin: 0.5rem auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .button-container button {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📚 Welcome to the Bookstore</h1>
+    </header>
+
+    <div class="container">
+        {% if request.user.is_authenticated %}
+            <div class="welcome-message">
+                Welcome, {{ request.user.username }}! 👋
+            </div>
+            <div class="button-container">
+                <a href="{% url 'book-list' %}"><button>Browse Books</button></a>
+                <a href="{% url 'cart-view' %}"><button>View Cart 🛒</button></a>
+
+                <!-- Logout form -->
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+
+                {% if request.user.is_staff %}
+                    <a href="/admin/"><button>Go to Admin Panel</button></a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="button-container">
+                <a href="{% url 'login' %}"><button>Login (Admin Only)</button></a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
