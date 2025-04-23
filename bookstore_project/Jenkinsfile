@@ -1,64 +1,62 @@
 pipeline {
     agent any
-
     environment {
-        COMPOSE_PROJECT_NAME = "bookstore_project"
-        COMPOSE_FILE = "bookstore_project/docker-compose.yml"
-        DJANGO_SERVICE = "bookstore_website"
+        DOCKER_COMPOSE = "docker-compose -f bookstore_project/docker-compose.yml -p bookstore_project"
     }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout SCM') {
             steps {
-                echo "✅ Code checked out from GitHub"
+                checkout scm
             }
         }
-
         stage('Build Docker Image') {
             steps {
-                echo "🐳 Building Docker image..."
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% build"
+                script {
+                    echo "🚀 Building Docker image..."
+                    bat "${DOCKER_COMPOSE} build"
+                }
             }
         }
-
         stage('Run Unit Tests') {
             steps {
-                echo "🧪 Running Django unit tests..."
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% run %DJANGO_SERVICE% python manage.py test"
+                script {
+                    echo "🧪 Running Django unit tests..."
+                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py test"
+                }
             }
         }
-
         stage('Apply Migrations') {
             steps {
-                echo "🛠️ Applying migrations..."
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% run %DJANGO_SERVICE% python manage.py makemigrations"
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% run %DJANGO_SERVICE% python manage.py migrate"
+                script {
+                    echo "💥 Applying migrations..."
+                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py makemigrations"
+                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py migrate"
+                }
             }
         }
-
         stage('Collect Static Files') {
             steps {
-                echo "📦 Collecting static files..."
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% run %DJANGO_SERVICE% python manage.py collectstatic --noinput"
+                script {
+                    echo "📂 Collecting static files..."
+                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py collectstatic --noinput"
+                }
             }
         }
-
         stage('Deploy App') {
             steps {
-                echo "🚀 Deploying app with fresh containers..."
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% up -d --build --force-recreate"
-                // Optionally, if you want to view logs for the containers after they're up
-                bat "docker-compose -f %COMPOSE_FILE% -p %COMPOSE_PROJECT_NAME% logs -f"
+                script {
+                    echo "🚀 Deploying app with fresh containers..."
+                    bat "${DOCKER_COMPOSE} up -d --build --force-recreate --remove-orphans"
+                }
             }
         }
-    }
-
-    post {
-        success {
-            echo '✅ CI/CD pipeline completed successfully! Containers are running.'
-        }
-        failure {
-            echo '❌ CI/CD pipeline failed. Please check the logs above.'
+        stage('View Logs') {
+            steps {
+                script {
+                    echo "📄 Viewing logs..."
+                    bat "${DOCKER_COMPOSE} logs -f"
+                }
+            }
         }
     }
 }
