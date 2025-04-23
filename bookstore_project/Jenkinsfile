@@ -1,60 +1,34 @@
 pipeline {
     agent any
+
     environment {
-        DOCKER_COMPOSE = "docker-compose -f bookstore_project/docker-compose.yml -p bookstore_project"
+        PROJECT_DIR = 'bookstore_project'  
     }
+
     stages {
-        stage('Checkout SCM') {
+        stage('Build') {
             steps {
-                checkout scm
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    echo "🚀 Building Docker image..."
-                    bat "${DOCKER_COMPOSE} build"
+                echo '🔧 Building Docker containers...'
+                dir("${env.PROJECT_DIR}") {
+                    bat 'docker-compose build'
                 }
             }
         }
-        stage('Run Unit Tests') {
+
+        stage('Test') {
             steps {
-                script {
-                    echo "🧪 Running Django unit tests..."
-                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py test"
+                echo '✅ Running Django tests...'
+                dir("${env.PROJECT_DIR}") {
+                    bat 'docker-compose run web python manage.py test'
                 }
             }
         }
-        stage('Apply Migrations') {
+
+        stage('Deploy') {
             steps {
-                script {
-                    echo "💥 Applying migrations..."
-                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py makemigrations"
-                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py migrate"
-                }
-            }
-        }
-        stage('Collect Static Files') {
-            steps {
-                script {
-                    echo "📂 Collecting static files..."
-                    bat "${DOCKER_COMPOSE} run bookstore_website python manage.py collectstatic --noinput"
-                }
-            }
-        }
-        stage('Deploy App') {
-            steps {
-                script {
-                    echo "🚀 Deploying app with fresh containers..."
-                    bat "${DOCKER_COMPOSE} up -d --build --force-recreate --remove-orphans"
-                }
-            }
-        }
-        stage('View Logs') {
-            steps {
-                script {
-                    echo "📄 Viewing logs..."
-                    bat "${DOCKER_COMPOSE} logs -f"
+                echo '🚀 Deploying the app using Docker Compose...'
+                dir("${env.PROJECT_DIR}") {
+                    bat 'docker-compose up -d'
                 }
             }
         }
