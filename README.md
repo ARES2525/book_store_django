@@ -32,7 +32,7 @@ This is a **Bookstore Management System** built with **Django**. It allows users
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/bookstore-project.git
+    git clone https://github.com/ARES2525/book_store_django
     cd bookstore-project
     ```
 
